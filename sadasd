@@ -1,0 +1,11 @@
+x = int(input("Wpisz liczbę"))
+from math import sqrt
+liczby_pierwsze = []
+for liczba in range(3, 100):
+    if all(liczba % i != 0 for i in range(2, int(sqrt(liczba)) + 1)):
+       liczby_pierwsze.append(liczba)
+print(liczby_pierwsze)
+if x in liczby_pierwsze:
+  print("Jest liczbą pierwszą")
+else:
+  print("Nie jest liczbą pierwszą")
