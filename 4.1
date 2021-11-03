@@ -1,27 +1,45 @@
-from math import sqrt
-pary = ""
-with open("pary.txt") as f:
-    pary = f.readlines()
 
-liczby = []
-znaki = []
+  
+1.
 
-for linia in pary:
-    linia.strip()
-    liczba, znak = linia.split()
-    liczby.append(int(liczba))
-    znaki.append(znak)
-liczby_pierwsze = []
-for liczba in range(3, 100):
-    if all(liczba % i != 0 for i in range(2, int(sqrt(liczba)) + 1)):
-       liczby_pierwsze.append(liczba)
+SELECT o.imie, o.nazwisko FROM 2015_konta k
+JOIN 2015_osoby o ON (k.id_osoby = o.id_osoby) WHERE k.nr_konta LIKE "49%"
 
-def czy_pierwsza(liczba):
-    return True if liczba in liczby_pierwsze else False
+2.
 
-for liczba in liczby:
-    if liczba % 2 == 0:
-        for i in range(3, liczba//2 + 1):
-            if czy_pierwsza(i) and czy_pierwsza(liczba-i):
-                print(liczba, i, liczba-i)
-                break
+SELECT k.id_osoby, SUM(k.dostepne_srodki) as ile FROM 2015_konta k
+GROUP BY k.id_osoby
+ORDER BY ile DESC
+LIMIT 1
+
+stary/nowy msql
+SELECT o.imie, o.nazwisko, SUM(k.dostepne_srodki) as ile FROM konta_txt k
+JOIN 2015_osoby o ON(o.id_osoby=k.id_osoby)
+GROUP BY k.id_osoby
+ORDER BY ile DESC
+LIMIT 1
+
+3.
+
+SELECT k.id_osoby, COUNT(*) as ile FROM 2015_konta k
+GROUP BY k.id_osoby  
+ORDER BY ile  DESC
+
+stary/nowy msql
+SELECT k.id_osoby, o.imie, o.nazwisko, COUNT(*) as ile FROM 2015_konta k
+JOIN 2015_osoby o ON(o.id_osoby = k.id_osoby)
+GROUP BY k.id_osoby  
+ORDER BY ile  DESC
+
+4.
+MAX
+SELECT bank, COUNT(*) as ile, SUM(dostepne_srodki) as kaska FROM 2015_konta
+GROUP BY bank  
+ORDER BY ile  DESC
+LIMIT 1
+
+MIN
+SELECT bank, COUNT(*) as ile, SUM(dostepne_srodki) as kaska FROM 2015_konta
+GROUP BY bank  
+ORDER BY ile  ASC
+LIMIT 1
