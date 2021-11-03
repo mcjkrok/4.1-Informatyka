@@ -1,45 +1,57 @@
-
-  
 1.
 
-SELECT o.imie, o.nazwisko FROM 2015_konta k
-JOIN 2015_osoby o ON (k.id_osoby = o.id_osoby) WHERE k.nr_konta LIKE "49%"
+SELECT DISTINCT k.imie, k.nazwisko FROM 2016_zamowienia z
+JOIN 2016_produkty p ON (p.id_produktu = z.id_produktu)
+JOIN 2016_kliencik ON (k.id_klienta = z.id_klienta) WHERE p.producent LIKE "HW" and p.grupa_towarowa LIKE "Notebooki"
 
-2.
 
-SELECT k.id_osoby, SUM(k.dostepne_srodki) as ile FROM 2015_konta k
-GROUP BY k.id_osoby
-ORDER BY ile DESC
-LIMIT 1
+2. 
 
-stary/nowy msql
-SELECT o.imie, o.nazwisko, SUM(k.dostepne_srodki) as ile FROM konta_txt k
-JOIN 2015_osoby o ON(o.id_osoby=k.id_osoby)
-GROUP BY k.id_osoby
-ORDER BY ile DESC
-LIMIT 1
+SELECT p.nazwa_produktu, p.grupa_towarowa, p.producent FROM 2016_zamowienia z
+JOIN 2016_produkty p ON (p.id_produktu = z.id_produktu)
+JOIN 2016_kliencik ON (k.id_klienta = z.id_klienta) WHERE k.imie LIKE "Anna" AND k.nazwisko LIKE "Kotnicka"
 
 3.
 
-SELECT k.id_osoby, COUNT(*) as ile FROM 2015_konta k
-GROUP BY k.id_osoby  
-ORDER BY ile  DESC
+SELECT z.ID_klienta, COUNT(*) as suma FROM 2016_zamowienia z
+GROUP BY ID_klienta  
+ORDER BY suma  DESC
+LIMIT 1
+
+SELECT * FROM 2016_klienci WHERE ID_klienta LIKE "MS545"
+
 
 stary/nowy msql
-SELECT k.id_osoby, o.imie, o.nazwisko, COUNT(*) as ile FROM 2015_konta k
-JOIN 2015_osoby o ON(o.id_osoby = k.id_osoby)
-GROUP BY k.id_osoby  
-ORDER BY ile  DESC
+SELECT k.imie, k.nazwisko, COUNT(*) as suma FROM 2016_zamowienia z
+JOIN 2016_klienci k ON (k.id_klienta = z.id_klienta)
+GROUP BY ID_klienta  
+ORDER BY suma  DESC
+LIMIT 1
 
 4.
-MAX
-SELECT bank, COUNT(*) as ile, SUM(dostepne_srodki) as kaska FROM 2015_konta
-GROUP BY bank  
-ORDER BY ile  DESC
-LIMIT 1
 
-MIN
-SELECT bank, COUNT(*) as ile, SUM(dostepne_srodki) as kaska FROM 2015_konta
-GROUP BY bank  
-ORDER BY ile  ASC
-LIMIT 1
+SELECT z.id_klienta, SUM(z.liczba_sztuk * p.cena_brutto) as lacznie FROM 2016_zamowienia z
+JOIN 2016_produkty p ON (p.id_produktu = z.id_produktu)
+JOIN 2016_kliencik ON (k.id_klienta = z.id_klienta)
+GROUP BY z.id_klienta
+ORDER BY lacznie DESC
+LIMIT 3
+
+SELECT imie,nazwisko FROM 2016_klienci WHERE ID_klienta LIKE "AS921"
+AS921
+KG154
+MS560
+
+stary/nowy msql
+SELECT k.imie, k.nazwisko, SUM(z.liczba_sztuk * p.cena_brutto) as lacznie FROM 2016_zamowienia z
+JOIN 2016_produkty p ON (p.id_produktu = z.id_produktu)
+JOIN 2016_kliencik ON (k.id_klienta = z.id_klienta)
+GROUP BY z.id_klienta
+ORDER BY lacznie DESC
+LIMIT 3
+
+
+5.
+
+SELECT SUM(z.liczba_sztuk) FROM 2016_zamowienia z
+JOIN 2016_produkty p ON (p.id_produktu = z.id_produktu) WHERE z.Data LIKE "2013-03-%" AND p.grupa_towarowa LIKE "Notebooki"
