@@ -9,3 +9,5 @@ if x in liczby_pierwsze:
   print("Jest liczbą pierwszą")
 else:
   print("Nie jest liczbą pierwszą")
+
+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
