@@ -1,57 +1,78 @@
-1.
+#include <iostream>
+#include <cmath> // używamy cmath zamiast math.h
+using namespace std;
 
-SELECT DISTINCT k.imie, k.nazwisko FROM 2016_zamowienia z
-JOIN 2016_produkty p ON (p.id_produktu = z.id_produktu)
-JOIN 2016_kliencik ON (k.id_klienta = z.id_klienta) WHERE p.producent LIKE "HW" and p.grupa_towarowa LIKE "Notebooki"
+void gadanie();
+float srednia(const float* tab, int n); // zmieniamy wskaźnik na stały
+float Maks(const float* tab, int n); // zmieniamy wskaźnik na stały
+float Minimum(const float* tab, int n); // zmieniamy wskaźnik na stały
+float odchylenie(const float* tab, int n); // zmieniamy wskaźnik na stały
 
+int main()
+{
+    int n;
+    gadanie();
+    cin >> n;
+    float* ptrTab = new float[n];
+    for (int i = 0; i < n; i++)
+    {
+        cout << "Podaj liczbe nr " << i + 1 << endl;
+        cin >> ptrTab[i];
+    }
+    cout << "Srednia: " << srednia(ptrTab, n) << endl;
+    cout << "Maksimum: " << Maks(ptrTab, n) << endl;
+    cout << "Minimum: " << Minimum(ptrTab, n) << endl;
+    cout << "Odchylenie standardowe: " << odchylenie(ptrTab, n) << endl;
+    delete[] ptrTab; // zmieniamy na delete[] dla dynamicznie alokowanej tablicy
+    ptrTab = nullptr;
+    return 0;
+}
 
-2. 
+void gadanie()
+{
+    cout << "Program oblicza srednia, odchylenie standardowe, wartosc minimalna i maksymalna z serii liczb wprowadzonych przez uzytkownika." << endl;
+    cout << "Ile liczb chcesz wprowadzic?" << endl;
+}
 
-SELECT p.nazwa_produktu, p.grupa_towarowa, p.producent FROM 2016_zamowienia z
-JOIN 2016_produkty p ON (p.id_produktu = z.id_produktu)
-JOIN 2016_kliencik ON (k.id_klienta = z.id_klienta) WHERE k.imie LIKE "Anna" AND k.nazwisko LIKE "Kotnicka"
+float srednia(const float* tab, int n)
+{
+    float s = 0;
+    for (int i = 0; i < n; i++)
+    {
+        s = s + tab[i];
+    }
+    return s / n;
+}
 
-3.
+float Maks(const float* tab, int n)
+{
+    float c = tab[0];
+    for (int i = 0; i < n; i++)
+    {
+        if (c <= tab[i])
+            c = tab[i];
+    }
+    return c;
+}
 
-SELECT z.ID_klienta, COUNT(*) as suma FROM 2016_zamowienia z
-GROUP BY ID_klienta  
-ORDER BY suma  DESC
-LIMIT 1
+float Minimum(const float* tab, int n)
+{
+    float d = tab[0];
+    for (int i = 0; i < n; i++)
+    {
+        if (d >= tab[i])
+            d = tab[i];
+    }
+    return d;
+}
 
-SELECT * FROM 2016_klienci WHERE ID_klienta LIKE "MS545"
-
-
-stary/nowy msql
-SELECT k.imie, k.nazwisko, COUNT(*) as suma FROM 2016_zamowienia z
-JOIN 2016_klienci k ON (k.id_klienta = z.id_klienta)
-GROUP BY ID_klienta  
-ORDER BY suma  DESC
-LIMIT 1
-
-4.
-
-SELECT z.id_klienta, SUM(z.liczba_sztuk * p.cena_brutto) as lacznie FROM 2016_zamowienia z
-JOIN 2016_produkty p ON (p.id_produktu = z.id_produktu)
-JOIN 2016_kliencik ON (k.id_klienta = z.id_klienta)
-GROUP BY z.id_klienta
-ORDER BY lacznie DESC
-LIMIT 3
-
-SELECT imie,nazwisko FROM 2016_klienci WHERE ID_klienta LIKE "AS921"
-AS921
-KG154
-MS560
-
-stary/nowy msql
-SELECT k.imie, k.nazwisko, SUM(z.liczba_sztuk * p.cena_brutto) as lacznie FROM 2016_zamowienia z
-JOIN 2016_produkty p ON (p.id_produktu = z.id_produktu)
-JOIN 2016_kliencik ON (k.id_klienta = z.id_klienta)
-GROUP BY z.id_klienta
-ORDER BY lacznie DESC
-LIMIT 3
-
-
-5.
-
-SELECT SUM(z.liczba_sztuk) FROM 2016_zamowienia z
-JOIN 2016_produkty p ON (p.id_produktu = z.id_produktu) WHERE z.Data LIKE "2013-03-%" AND p.grupa_towarowa LIKE "Notebooki"
+float odchylenie(const float* tab, int n)
+{
+    float r = 0, y = srednia(tab, n);
+    for (int i = 0; i < n; i++)
+    {
+        r = r + pow(tab[i] - y, 2);
+    }
+    r = r / n; // zmieniamy na r / n, aby obliczyć średnią kwadratów różnic
+    return sqrt(r);
+}
