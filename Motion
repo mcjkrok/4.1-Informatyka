@@ -21,6 +21,7 @@ float* OdczytajMacierzZPliku(const string& sciezkaDoPliku, int& szerokosc, int& 
     for (int y = 0; y < wysokosc; ++y)
     {
         for (int x = 0; x < szerokosc; ++x)
+        {
             int indeks = y * szerokosc + x;
             plik >> tab[indeks];
         }
@@ -49,8 +50,7 @@ float* DodajMacierze(float* tab1, int szerokosc1, int wysokosc1, float* tab2, in
         return nullptr;
 
     int szerokosc = szerokosc1;
-
-    {    int wysokosc = wysokosc1;
+    int wysokosc = wysokosc1;
     int rozmiarTablicy = szerokosc * wysokosc;
 
     float* tabWynikowa = new float[rozmiarTablicy];
@@ -67,10 +67,35 @@ float* DodajMacierze(float* tab1, int szerokosc1, int wysokosc1, float* tab2, in
     return tabWynikowa;
 }
 
+void ZapiszMacierzDoPliku(const string& sciezkaDoPliku, float* tab, int szerokosc, int wysokosc)
+{
+    ofstream plik(sciezkaDoPliku);
+    if (!plik.is_open())
+    {
+        cout << "Blad zapisu do pliku." << endl;
+        return;
+    }
+
+    plik << szerokosc << " " << wysokosc << endl;
+
+    for (int y = 0; y < wysokosc; ++y)
+    {
+        for (int x = 0; x < szerokosc; ++x)
+        {
+            int indeks = y * szerokosc + x;
+            plik << tab[indeks] << " ";
+        }
+        plik << endl;
+    }
+
+    plik.close();
+}
+
 int main()
 {
-    string sciezkaDoPliku1 = "C:\\Users\\Student\\CLionProjects\\untitled1\\macierz1.txt";
-    string sciezkaDoPliku2 = "C:\\Users\\Student\\CLionProjects\\untitled1\\macierz2.txt";
+    string sciezkaDoPliku1 = "C:\\Users\\Student\\CLionProjects\\motion\\macierz1.txt";
+    string sciezkaDoPliku2 = "C:\\Users\\Student\\CLionProjects\\motion\\macierz2.txt";
+    string sciezkaDoPlikuWynikowego = "C:\\Users\\Student\\CLionProjects\\motion\\wynikowa.txt";
     int szerokosc1 = 0, wysokosc1 = 0;
     int szerokosc2 = 0, wysokosc2 = 0;
 
@@ -93,12 +118,14 @@ int main()
     float* tabWynikowa = DodajMacierze(tab1, szerokosc1, wysokosc1, tab2, szerokosc2, wysokosc2);
     if (tabWynikowa == nullptr)
     {
-        cout << "Oszalales" << endl;
+        cout << "Zle wymiary" << endl;
     }
     else
     {
         WyswietlMacierz(tabWynikowa, szerokosc1, wysokosc1);
+        ZapiszMacierzDoPliku(sciezkaDoPlikuWynikowego, tabWynikowa, szerokosc1, wysokosc1);
         delete[] tabWynikowa;
+        cout << "Wynikowa macierz zostala zapisana do pliku." << endl;
     }
 
     delete[] tab1;
