@@ -1,22 +1,140 @@
-import cv2
+#include <string>
+#include <fstream>
+#include <iostream>
+using namespace std;
 
-cap = cv2.VideoCapture(0) 
-face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+float* OdczytajMacierzZPliku(const string& sciezkaDoPliku, int& szerokosc, int& wysokosc)
+{
+    szerokosc = 0;
+    wysokosc = 0;
 
-while True:
-    ret, img = cap.read()
-    
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    
-    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)
-    
-    for (x, y, w, h) in faces:
-        cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 0), 2)
-        
-    cv2.imshow('img', img)
-    
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
+    ifstream plik(sciezkaDoPliku);
+    if (!plik.is_open())
+        return nullptr;
 
-cap.release()
-cv2.destroyAllWindows()
+    plik >> szerokosc;
+    plik >> wysokosc;
+
+    int rozmiarTablicy = szerokosc * wysokosc;
+    float* tab = new float[rozmiarTablicy];
+
+    for (int y = 0; y < wysokosc; ++y)
+    {
+        for (int x = 0; x < szerokosc; ++x)
+            int indeks = y * szerokosc + x;
+            plik >> tab[indeks];
+        }
+    }
+
+    plik.close();
+    return tab;
+}
+
+void WyswietlMacierz(float* tab, int szerokosc, int wysokosc)
+{
+    for (int y = 0; y < wysokosc; ++y)
+    {
+        for (int x = 0; x < szerokosc; ++x)
+        {
+            int indeks = y * szerokosc + x;
+            cout << tab[indeks] << "\t";
+        }
+        cout << endl;
+    }
+}
+
+float* DodajMacierze(float* tab1, int szerokosc1, int wysokosc1, float* tab2, int szerokosc2, int wysokosc2)
+{
+    if (szerokosc1 != szerokosc2 || wysokosc1 != wysokosc2)
+        return nullptr;
+
+    int szerokosc = szerokosc1;
+
+    {    int wysokosc = wysokosc1;
+    int rozmiarTablicy = szerokosc * wysokosc;
+
+    float* tabWynikowa = new float[rozmiarTablicy];
+
+    for (int y = 0; y < wysokosc; ++y)
+    {
+        for (int x = 0; x < szerokosc; ++x)
+        {
+            int indeks = y * szerokosc + x;
+            tabWynikowa[indeks] = tab1[indeks] + tab2[indeks];
+        }
+    }
+
+    return tabWynikowa;
+}
+
+int main()
+{
+    string sciezkaDoPliku1 = "C:\\Users\\Student\\CLionProjects\\untitled1\\macierz1.txt";
+    string sciezkaDoPliku2 = "C:\\Users\\Student\\CLionProjects\\untitled1\\macierz2.txt";
+    int szerokosc1 = 0, wysokosc1 = 0;
+    int szerokosc2 = 0, wysokosc2 = 0;
+
+    float* tab1 = OdczytajMacierzZPliku(sciezkaDoPliku1, szerokosc1, wysokosc1);
+    float* tab2 = OdczytajMacierzZPliku(sciezkaDoPliku2, szerokosc2, wysokosc2);
+
+    if (tab1 == nullptr || tab2 == nullptr)
+    {
+        cout << "Blad wczytywania plikow." << endl;
+        return 1;
+    }
+
+    cout << "Macierz 1:" << endl;
+    WyswietlMacierz(tab1, szerokosc1, wysokosc1);
+
+    cout << endl << "Macierz 2:" << endl;
+    WyswietlMacierz(tab2, szerokosc2, wysokosc2);
+
+    cout << endl << "Wynikowa macierz:" << endl;
+    float* tabWynikowa = DodajMacierze(tab1, szerokosc1, wysokosc1, tab2, szerokosc2, wysokosc2);
+    if (tabWynikowa == nullptr)
+    {
+        cout << "Oszalales" << endl;
+    }
+    else
+    {
+        WyswietlMacierz(tabWynikowa, szerokosc1, wysokosc1);
+        delete[] tabWynikowa;
+    }
+
+    delete[] tab1;
+    delete[] tab2;
+
+    return 0;
+}
+
+
+
+#include <iostream>
+
+using namespace std;
+
+const int rozmiar = 10;
+
+void wypelnijTablice(int tab[][rozmiar]) {
+    for (int i = 0; i < rozmiar; i++) {
+        for (int j = 0; j < rozmiar; j++) {
+            tab[i][j] = (i + 1) * (j + 1);
+        }
+    }
+}
+
+void wyswietlTablice(int tab[][rozmiar]) {
+    for (int i = 0; i < rozmiar; i++) {
+        for (int j = 0; j < rozmiar; j++) {
+            cout << tab[i][j] << "\t";
+        }
+        cout << endl;
+    }
+}
+
+int main() {
+    int table[rozmiar][rozmiar];
+    wypelnijTablice(table);
+    wyswietlTablice(table);
+    return 0;
+}
